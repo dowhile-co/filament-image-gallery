@@ -4,6 +4,7 @@ namespace Alsaloul\ImageGallery\Infolists\Entries;
 
 use Closure;
 use Filament\Infolists\Components\Entry;
+use Illuminate\Support\Facades\Storage;
 
 class ImageGalleryEntry extends Entry
 {
@@ -13,7 +14,7 @@ class ImageGalleryEntry extends Entry
 
     protected int | Closure $thumbHeight = 128;
 
-    protected string | Closure $gap = 'gap-4';
+    protected string | Closure $imageGap = 'gap-4';
 
     protected string | Closure $rounded = 'rounded-lg';
 
@@ -22,6 +23,10 @@ class ImageGalleryEntry extends Entry
     protected string | Closure $emptyText = 'No images';
 
     protected string | Closure | null $wrapperClass = null;
+
+    protected string | Closure | null $disk = null;
+
+    protected string | Closure $visibility = 'public';
 
     public function thumbWidth(int | Closure $width): static
     {
@@ -47,16 +52,16 @@ class ImageGalleryEntry extends Entry
         return $this->evaluate($this->thumbHeight);
     }
 
-    public function gap(string | Closure $gap): static
+    public function imageGap(string | Closure $gap): static
     {
-        $this->gap = $gap;
+        $this->imageGap = $gap;
 
         return $this;
     }
 
-    public function getGap(): string
+    public function getImageGap(): string
     {
-        return $this->evaluate($this->gap);
+        return $this->evaluate($this->imageGap);
     }
 
     public function rounded(string | Closure $rounded): static
@@ -107,6 +112,30 @@ class ImageGalleryEntry extends Entry
         return $this->evaluate($this->wrapperClass);
     }
 
+    public function disk(string | Closure | null $disk): static
+    {
+        $this->disk = $disk;
+
+        return $this;
+    }
+
+    public function getDisk(): ?string
+    {
+        return $this->evaluate($this->disk);
+    }
+
+    public function visibility(string | Closure $visibility): static
+    {
+        $this->visibility = $visibility;
+
+        return $this;
+    }
+
+    public function getVisibility(): string
+    {
+        return $this->evaluate($this->visibility);
+    }
+
     /**
      * Get normalized image URLs from state
      */
@@ -118,18 +147,42 @@ class ImageGalleryEntry extends Entry
             return [];
         }
 
-        return collect($state)->map(function ($item) {
+        $disk = $this->getDisk();
+        $visibility = $this->getVisibility();
+
+        return collect($state)->map(function ($item) use ($disk, $visibility) {
+            $path = null;
+            
             if (is_string($item)) {
-                return $item;
-            }
-            if (is_array($item)) {
-                return $item['image'] ?? $item['url'] ?? null;
-            }
-            if (is_object($item)) {
-                return $item->image ?? $item->url ?? null;
+                $path = $item;
+            } elseif (is_array($item)) {
+                $path = $item['image'] ?? $item['url'] ?? $item['path'] ?? null;
+            } elseif (is_object($item)) {
+                $path = $item->image ?? $item->url ?? $item->path ?? null;
             }
 
-            return null;
+            if (empty($path)) {
+                return null;
+            }
+
+            // If it's already a full URL, return as-is
+            if (filter_var($path, FILTER_VALIDATE_URL)) {
+                return $path;
+            }
+
+            // If disk is specified, generate URL from storage
+            if ($disk) {
+                $storage = Storage::disk($disk);
+                
+                if ($visibility === 'private') {
+                    return $storage->temporaryUrl($path, now()->addMinutes(5));
+                }
+                
+                return $storage->url($path);
+            }
+
+            // Default: return path as-is (might be relative URL)
+            return $path;
         })->filter()->values()->toArray();
     }
 }

@@ -18,9 +18,9 @@ A Filament plugin for displaying image galleries with zoom, rotate, flip, and fu
 - 📋 **Infolist Entry** - Show image galleries in infolists with horizontal scrolling
 - 🧩 **Blade Component** - Use standalone in any Blade view
 - 🔍 **Viewer.js Integration** - Zoom, rotate, flip, and fullscreen image viewing
+- 💾 **Storage Disk Support** - Works with any Laravel filesystem disk
 - 🌙 **Dark Mode Support** - Works seamlessly with dark mode
 - 🌐 **RTL Support** - Full right-to-left language support
-- 🌍 **Translations** - English and Arabic translations included
 
 ## Installation
 
@@ -43,6 +43,7 @@ use Alsaloul\ImageGallery\Tables\Columns\ImageGalleryColumn;
 
 ImageGalleryColumn::make('images')
     ->getStateUsing(fn ($record) => $record->images->pluck('image')->toArray())
+    ->disk(config('filesystems.default'))
     ->circle()
     ->stacked(3)
     ->ring(2, '#3b82f6')
@@ -54,16 +55,17 @@ ImageGalleryColumn::make('images')
 
 | Method | Description | Default |
 |--------|-------------|---------|
+| `disk(string)` | Storage disk for images | `null` |
+| `visibility(string)` | `'public'` or `'private'` (for temporary URLs) | `'public'` |
 | `thumbWidth(int)` | Thumbnail width in pixels | `40` |
 | `thumbHeight(int)` | Thumbnail height in pixels | `40` |
 | `limit(int\|null)` | Maximum images to show | `3` |
-| `stacked(int\|bool)` | Stack thumbnails with overlap. Pass `int` for custom spacing (e.g., `stacked(5)`) | `false` |
+| `stacked(int\|bool)` | Stack thumbnails. Pass `int` for custom spacing | `false` |
 | `square(bool)` | Square shape with rounded corners | `false` |
 | `circle(bool)` | Circular shape | `false` |
-| `ring(int, string)` | Add border ring with width and optional color | `1, null` |
+| `ring(int, string)` | Border ring with width and color | `1, null` |
 | `ringColor(string)` | Set ring color separately | `null` |
 | `limitedRemainingText(bool)` | Show "+N" badge for remaining | `true` |
-| `emptyText(string)` | Text when no images | `'No images'` |
 
 ---
 
@@ -73,22 +75,22 @@ ImageGalleryColumn::make('images')
 use Alsaloul\ImageGallery\Infolists\Entries\ImageGalleryEntry;
 
 ImageGalleryEntry::make('images')
+    ->disk(config('filesystems.default'))
     ->thumbWidth(128)
     ->thumbHeight(128)
-    ->gap('gap-4')
-    ->emptyText('No images available'),
+    ->imageGap('gap-4'),
 ```
 
 #### Available Methods
 
 | Method | Description | Default |
 |--------|-------------|---------|
+| `disk(string)` | Storage disk for images | `null` |
+| `visibility(string)` | `'public'` or `'private'` | `'public'` |
 | `thumbWidth(int)` | Thumbnail width in pixels | `128` |
 | `thumbHeight(int)` | Thumbnail height in pixels | `128` |
-| `gap(string)` | Tailwind gap class | `'gap-4'` |
+| `imageGap(string)` | Tailwind gap class | `'gap-4'` |
 | `rounded(string)` | Tailwind rounded class | `'rounded-lg'` |
-| `zoomCursor(bool)` | Show zoom cursor on hover | `true` |
-| `emptyText(string)` | Text when no images | `'No images'` |
 | `wrapperClass(string)` | Additional wrapper classes | `null` |
 
 ---
@@ -97,8 +99,7 @@ ImageGalleryEntry::make('images')
 
 ```blade
 <x-image-gallery::image-gallery 
-    :images="$trip->images" 
-    empty-text="No images for this trip"
+    :images="$model->images" 
     :thumb-width="150"
     :thumb-height="150"
     rounded="rounded-xl"
@@ -106,25 +107,26 @@ ImageGalleryEntry::make('images')
 />
 ```
 
-#### Available Props
-
-| Prop | Description | Default |
-|------|-------------|---------|
-| `images` | Array of image URLs or objects with `image` property | `[]` |
-| `emptyText` | Text when no images | Translated message |
-| `thumbWidth` | Thumbnail width in pixels | `128` |
-| `thumbHeight` | Thumbnail height in pixels | `128` |
-| `rounded` | Tailwind rounded class | `'rounded-lg'` |
-| `gap` | Tailwind gap class | `'gap-4'` |
-| `wrapperClass` | Additional wrapper classes | `''` |
-| `zoomCursor` | Show zoom cursor on hover | `true` |
-| `id` | Custom gallery ID | Auto-generated |
-
 ---
 
 ## Examples
 
-### Circular Stacked Images with Blue Ring
+### With Storage Disk
+```php
+ImageGalleryColumn::make('images')
+    ->disk('s3')
+    ->circle()
+    ->stacked(3)
+    ->limit(3)
+
+// For private files
+ImageGalleryColumn::make('images')
+    ->disk('s3')
+    ->visibility('private')  // Generates temporary URLs
+    ->limit(3)
+```
+
+### Circular Stacked with Ring
 ```php
 ImageGalleryColumn::make('images')
     ->circle()
@@ -133,50 +135,11 @@ ImageGalleryColumn::make('images')
     ->limit(3)
 ```
 
-### Square Images Without Stacking
-```php
-ImageGalleryColumn::make('images')
-    ->square()
-    ->limit(5)
-```
-
-### Custom Overlap Spacing
-```php
-ImageGalleryColumn::make('images')
-    ->circle()
-    ->stacked(5)  // -space-x-5
-    ->limit(4)
-```
-
 ---
-
-## Image Data Format
-
-All components accept images in multiple formats:
-
-```php
-// Array of URLs
-$images = ['https://example.com/image1.jpg', 'https://example.com/image2.jpg'];
-
-// Array of objects with 'image' property
-$images = [['image' => 'https://example.com/image1.jpg']];
-
-// Eloquent collection with 'image' attribute
-$images = $trip->images;
-```
-
-## Upgrading
-
-### From 1.x to 2.x
-
-Version 2.x adds support for Filament v4 while maintaining backward compatibility with v3:
-
-- PHP requirement updated to `^8.2`
-- No breaking changes in API
 
 ## Changelog
 
-Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
+Please see [CHANGELOG](CHANGELOG.md) for more information.
 
 ## Credits
 

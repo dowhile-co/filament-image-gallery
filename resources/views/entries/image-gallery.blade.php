@@ -2,7 +2,7 @@
     $urls = $getImageUrls();
     $width = $getThumbWidth();
     $height = $getThumbHeight();
-    $gap = $getGap();
+    $gap = $getImageGap();
     $rounded = $getRounded();
     $zoomCursor = $hasZoomCursor();
     $wrapperClass = $getWrapperClass() ?? '';
@@ -15,22 +15,18 @@
         class="image-gallery flex overflow-x-auto {{ $gap }} my-2 pb-2 select-none {{ $wrapperClass }}"
         data-viewer-gallery
     >
-        @forelse($urls as $src)
+        @foreach($urls as $src)
             <img
                 src="{{ $src }}"
                 loading="lazy"
-                class="{{ $rounded }} shadow object-cover border border-gray-200 dark:border-gray-700 hover:scale-105 transition {{ $zoomCursor ? 'cursor-zoom-in' : '' }}"
+                class="{{ $rounded }} shadow object-cover border border-gray-200 dark:border-gray-700 hover:scale-105 transition cursor-pointer"
                 style="width: {{ $width }}px; height: {{ $height }}px; flex-shrink: 0;"
                 alt="image"
             />
-        @empty
-            <span class="text-gray-400 dark:text-gray-500">{{ $getEmptyText() }}</span>
-        @endforelse
+        @endforeach
     </div>
 </x-dynamic-component>
 
 @once
-    @push('scripts')
-        <x-image-gallery::viewer-script />
-    @endpush
+    <x-image-gallery::viewer-script />
 @endonce

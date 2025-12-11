@@ -2,6 +2,20 @@
 
 All notable changes to `filament-image-gallery` will be documented in this file.
 
+## v2.0.1 - 2024-12-11
+
+### Added
+- `disk()` method for Storage integration (both Column and Entry)
+- `visibility()` method for private files with temporary URLs
+- Cursor pointer on image hover
+
+### Changed
+- Renamed `gap()` to `imageGap()` in Entry to avoid Filament v4 conflict
+- Removed empty text display when no images
+
+### Fixed
+- Filament v4 compatibility for ImageGalleryEntry
+
 ## v2.0.0 - 2024-12-11
 
 ### Added
