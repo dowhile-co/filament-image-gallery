@@ -10,12 +10,12 @@ A Filament plugin for displaying image galleries with zoom, rotate, flip, and fu
 ### Table Column
 | Thumbnails | Gallery Viewer |
 |:----------:|:--------------:|
-| ![Table Column - Thumbnails](assets/onClickTable.jpg) | ![Table Column - Gallery Viewer](assets/aferClickTable.png) |
+| ![Table Column - Thumbnails](https://raw.githubusercontent.com/al-saloul/images/refs/heads/main/onClickTable.jpg) | ![Table Column - Gallery Viewer](https://raw.githubusercontent.com/al-saloul/images/refs/heads/main/aferClickTable.png) |
 
 ### Infolist Entry
 | Thumbnails | Gallery Viewer |
 |:----------:|:--------------:|
-| ![Infolist Entry - Thumbnails](assets/onClickInfolist.jpg) | ![Infolist Entry - Gallery Viewer](assets/aferClicknfolist.png) |
+| ![Infolist Entry - Thumbnails](https://raw.githubusercontent.com/al-saloul/images/refs/heads/main/onClickInfolist.jpg) | ![Infolist Entry - Gallery Viewer](https://raw.githubusercontent.com/al-saloul/images/refs/heads/main/aferClicknfolist.png) |
 
 ---
 
