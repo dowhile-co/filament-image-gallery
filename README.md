@@ -10,7 +10,7 @@
 
 A Filament plugin for displaying image galleries with zoom, rotate, flip, and fullscreen capabilities using [Viewer.js](https://fengyuanchen.github.io/viewerjs/).
 
-## demo
+## Demo
 <p align="center">
     <img src="https://raw.githubusercontent.com/al-saloul/images/refs/heads/main/filament-image-gallery.gif" alt="filament-image-gallery">
 </p>
