@@ -2,9 +2,11 @@
 
 namespace Alsaloul\ImageGallery;
 
+use Filament\Infolists\Components\ImageEntry;
 use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
+use Filament\Tables\Columns\ImageColumn;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -30,14 +32,16 @@ class ImageGalleryServiceProvider extends PackageServiceProvider
             $this->getAssetPackageName()
         );
 
-        \Filament\Tables\Columns\ImageColumn::macro('imageGallery', function () {
+        ImageColumn::macro('imageGallery', function () {
+            /** @var ImageColumn $this */
             $this->view('image-gallery::columns.image-column-gallery');
             $this->disabledClick();
 
             return $this;
         });
 
-        \Filament\Infolists\Components\ImageEntry::macro('imageGallery', function () {
+        ImageEntry::macro('imageGallery', function () {
+            /** @var ImageEntry $this */
             $this->view('image-gallery::infolists.entries.image-entry-gallery');
 
             return $this;
