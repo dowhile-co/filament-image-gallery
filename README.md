@@ -45,6 +45,7 @@ A Filament plugin for displaying image galleries with zoom, rotate, flip, and fu
 - 💾 **Storage Disk Support** - Works with any Laravel filesystem disk
 - 🌙 **Dark Mode Support** - Works seamlessly with dark mode
 - 🌐 **RTL Support** - Full right-to-left language support
+- ⚡ **SPA Mode Compatible** - Works seamlessly with Filament's `spa()` mode without page reload
 
 ## Installation
 
@@ -105,6 +106,7 @@ ImageGalleryColumn::make('images')
 | `thumbHeight(int)` | Thumbnail height in pixels | `40` |
 | `limit(int\|null)` | Maximum images to show | `3` |
 | `stacked(int\|bool)` | Stack thumbnails. Pass `int` for custom spacing | `false` |
+| `overlap(int)` | Set overlap value for stacked images (0-8) | `2` |
 | `square(bool)` | Square shape with rounded corners | `false` |
 | `circular(bool)` | Circular shape | `false` |
 | `ring(int, string)` | Border ring with width and color | `1, null` |
@@ -174,8 +176,15 @@ ImageGalleryColumn::make('images')
 ```php
 ImageGalleryColumn::make('images')
     ->circular()
-    ->stacked(3)
+    ->stacked()
+    ->overlap(3)  // Control overlap spacing (0-8)
     ->ring(2, '#3b82f6')
+    ->limit(3)
+
+// Or use shorthand: stacked(3) sets both stacked=true and overlap=3
+ImageGalleryColumn::make('images')
+    ->circular()
+    ->stacked(3)
     ->limit(3)
 ```
 

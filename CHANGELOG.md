@@ -2,6 +2,24 @@
 
 All notable changes to `filament-image-gallery` will be documented in this file.
 
+## v2.1.4 - 2025-12-17
+
+### Added
+- `overlap()` method for `ImageGalleryColumn` to match Filament's API
+- `getOverlap()` method as an alias for consistency
+
+### Fixed
+- **SPA Mode Compatibility**: Fixed image gallery viewer not loading without page reload when using `spa()` mode
+  - Moved Viewer.js initialization to dynamically loaded JavaScript
+  - Assets are now loaded on-demand when galleries are detected
+  - Works seamlessly with Livewire 3.x SPA navigation
+- **Stacked Layout**: Fixed stacked images not displaying correctly due to Tailwind dynamic class generation
+  - Replaced Tailwind `-space-x-*` classes with inline `margin-inline-start` styles
+
+### Changed
+- Viewer.js CDN assets are now loaded dynamically via JavaScript instead of inline in Blade templates
+- Improved MutationObserver for better detection of dynamically added galleries
+
 ## v2.1.3 - 2025-12-16
 
 ### Changed
