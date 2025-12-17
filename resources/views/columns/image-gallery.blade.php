@@ -37,12 +37,10 @@
         $borderColorClass = '';
     }
 
-    // Stacked spacing - use dynamic -space-x value
-    if ($isStacked) {
-        $stackedClass = "-space-x-{$stackedOverlap} rtl:space-x-reverse";
-    } else {
-        $stackedClass = 'gap-1';
-    }
+    // Calculate stacked margin using inline styles (Tailwind-safe)
+    // Each unit = 0.25rem (4px)
+    $stackedMarginValue = $stackedOverlap * 0.25;
+    $stackedMargin = $isStacked && $stackedOverlap > 0 ? "-{$stackedMarginValue}rem" : '0';
 
     // Size styles - only add if width/height specified
     $sizeStyle = '';
@@ -54,16 +52,18 @@
     }
 @endphp
 
-<div id="{{ $galleryId }}" class="flex items-center {{ $stackedClass }}" data-viewer-gallery wire:ignore.self>
-    @foreach ($visibleUrls as $src)
+<div id="{{ $galleryId }}" class="flex items-center {{ $isStacked ? '' : 'gap-1' }}" data-viewer-gallery
+    wire:ignore.self>
+    @foreach ($visibleUrls as $index => $src)
         <img src="{{ $src }}" loading="lazy"
             class="object-cover {{ $borderColorClass }} {{ $borderRadiusClass }} hover:scale-110 transition cursor-pointer"
-            style="{{ $sizeStyle }} {{ $ringStyle }}" alt="image" />
+            style="{{ $sizeStyle }} {{ $ringStyle }} @if ($isStacked && $index > 0) margin-inline-start: {{ $stackedMargin }}; @endif"
+            alt="image" />
     @endforeach
 
     @if ($shouldShowRemainingText() && $remaining > 0 && $width)
         <span class="flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-200"
-            style="width: {{ $width }}px; height: {{ $height ?? $width }}px; min-width: {{ $width }}px;">
+            style="width: {{ $width }}px; height: {{ $height ?? $width }}px; min-width: {{ $width }}px; @if ($isStacked) margin-inline-start: {{ $stackedMargin }}; @endif">
             +{{ $remaining }}
         </span>
     @endif

@@ -12,7 +12,7 @@ class ImageGalleryColumn extends Column
 
     protected int | Closure | null $thumbWidth = null;
 
-    protected int | Closure | null $thumbHeight = null;
+    protected int | Closure | null $thumbHeight = 40;
 
     protected int | Closure | null $limit = 3;
 
