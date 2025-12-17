@@ -12,31 +12,35 @@
 
 @php
     $galleryId = $id ?? 'gallery-' . str_replace(['{', '}', '-'], '', (string) \Illuminate\Support\Str::uuid());
-    $urls = collect($images)->map(function($item) {
-        if (is_string($item)) return $item;
-        if (is_array($item)) return $item['image'] ?? $item['url'] ?? null;
-        if (is_object($item)) return $item->image ?? $item->url ?? null;
-        return null;
-    })->filter()->values();
+    $urls = collect($images)
+        ->map(function ($item) {
+            if (is_string($item)) {
+                return $item;
+            }
+            if (is_array($item)) {
+                return $item['image'] ?? ($item['url'] ?? null);
+            }
+            if (is_object($item)) {
+                return $item->image ?? ($item->url ?? null);
+            }
+            return null;
+        })
+        ->filter()
+        ->values();
     $emptyTextDisplay = $emptyText ?? __('image-gallery::messages.empty');
 @endphp
 
-<div
-    id="{{ $galleryId }}"
+<div id="{{ $galleryId }}"
     class="image-gallery flex overflow-x-auto {{ $gap }} my-4 pb-2 select-none {{ $wrapperClass }}"
-    data-viewer-gallery
->
+    data-viewer-gallery>
     @forelse($urls as $src)
-        <img
-            src="{{ $src }}"
-            loading="lazy"
+        <img src="{{ $src }}" loading="lazy"
             class="{{ $rounded }} shadow object-cover border border-gray-200 dark:border-gray-700 hover:scale-105 transition {{ $zoomCursor ? 'cursor-zoom-in' : '' }}"
             style="width: {{ (int) $thumbWidth }}px; height: {{ (int) $thumbHeight }}px; flex-shrink: 0;"
-            alt="image"
-        />
+            alt="image" />
     @empty
         <span class="text-gray-400 dark:text-gray-500">{{ $emptyTextDisplay }}</span>
     @endforelse
 </div>
 
-<x-image-gallery::viewer-script />
+{{-- Viewer.js assets are loaded dynamically via image-gallery.js --}}
